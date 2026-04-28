@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary_night">#212842</color>
+    <color name="warm_background">#F0E7D5</color>
+    <color name="risk_low">#6FAF7A</color>
+    <color name="risk_medium">#D9A441</color>
+    <color name="risk_high">#C85C5C</color>
+</resources>
