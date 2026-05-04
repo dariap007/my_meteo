@@ -32,12 +32,9 @@
 
 Готово:
 
-- профиль в `SharedPreferences`;
-- дневник в `SharedPreferences`.
-
-Следующий шаг:
-
-- заменить дневник на Room, если разрешены зависимости.
+- профиль в SQLite;
+- дневник в SQLite;
+- таблицы `profile` и `diary_entries` через `SQLiteOpenHelper`.
 
 ## Chunk 5. Уведомления
 

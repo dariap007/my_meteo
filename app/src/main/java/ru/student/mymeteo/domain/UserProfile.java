@@ -7,12 +7,26 @@ public class UserProfile {
     public boolean joints;
     public boolean magneticSensitive;
     public boolean notificationsEnabled;
+    public boolean notifyPressure;
+    public boolean notifyTemperature;
+    public boolean notifyHumidity;
+    public boolean notifyGeomagnetic;
+    public boolean notifyTomorrow;
+    public boolean disclaimerAccepted;
+    public String ageGroup;
     public double latitude;
     public double longitude;
     public String city;
 
     public UserProfile() {
         notificationsEnabled = true;
+        notifyPressure = true;
+        notifyTemperature = true;
+        notifyHumidity = true;
+        notifyGeomagnetic = true;
+        notifyTomorrow = true;
+        disclaimerAccepted = false;
+        ageGroup = "18-30";
         latitude = 55.7558;
         longitude = 37.6173;
         city = "Москва";

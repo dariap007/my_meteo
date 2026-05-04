@@ -34,9 +34,9 @@ public class MyMeteoNotifier {
         if (forecast.level == RiskLevel.LOW) {
             return;
         }
-        String text = forecast.reasons.isEmpty()
+        String text = forecast.notificationText == null || forecast.notificationText.isEmpty()
                 ? "Проверьте прогноз и рекомендации в MyMeteo."
-                : forecast.reasons.get(0);
+                : forecast.notificationText;
 
         android.app.Notification.Builder builder = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
                 ? new android.app.Notification.Builder(context, CHANNEL_ID)
