@@ -43,6 +43,8 @@ import ru.student.mymeteo.data.ProfileStore;
 import ru.student.mymeteo.domain.DiaryEntry;
 import ru.student.mymeteo.domain.FactorStatus;
 import ru.student.mymeteo.domain.ForecastBundle;
+import ru.student.mymeteo.domain.PersonalRiskModel;
+import ru.student.mymeteo.domain.PersonalRiskPrediction;
 import ru.student.mymeteo.domain.RiskForecast;
 import ru.student.mymeteo.domain.UserProfile;
 import ru.student.mymeteo.notifications.MyMeteoNotifier;
@@ -61,6 +63,7 @@ public class MainActivity extends Activity {
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
     private final ForecastRepository forecastRepository = new ForecastRepository();
     private final MyMeteoNotifier notifier = new MyMeteoNotifier();
+    private final PersonalRiskModel personalRiskModel = new PersonalRiskModel();
 
     private ProfileStore profileStore;
     private DiaryStore diaryStore;
@@ -369,6 +372,8 @@ public class MainActivity extends Activity {
         status.addView(text("Считывается одним взглядом: зеленый, желтый или мягкий красный уровень.", 13, Color.WHITE, Typeface.NORMAL));
         content.addView(status);
 
+        content.addView(personalRiskCard());
+
         LinearLayout trend = card();
         trend.addView(sectionTitle("Динамика индекса"));
         RiskTrendView chart = new RiskTrendView(this);
@@ -505,6 +510,32 @@ public class MainActivity extends Activity {
             card.addView(small("Плохое самочувствие отмечено " + lowWellbeing + " раз. Возможные персональные триггеры: давление - " + pressureDays + ", геомагнитная активность - " + geomagneticDays + "."));
         }
         card.addView(small("Запись автоматически связывается с температурой, давлением, влажностью, Kp-индексом и текущим риском."));
+        return card;
+    }
+
+    private LinearLayout personalRiskCard() {
+        PersonalRiskPrediction prediction = personalRiskModel.trainAndPredict(
+                diaryStore.load(),
+                bundle.weather,
+                bundle.geomagnetic
+        );
+        LinearLayout card = card();
+        card.addView(sectionTitle(prediction.ready && prediction.highRisk
+                ? "Ваш персональный риск выше среднего"
+                : "ML-персонализация"));
+
+        if (!prediction.ready) {
+            card.addView(small(prediction.explanation));
+            card.addView(metric("Очищенных записей", String.valueOf(prediction.trainingSize)));
+            return card;
+        }
+
+        int percent = (int) Math.round(prediction.probability * 100);
+        card.addView(metric("Оценка модели", percent + "%"));
+        card.addView(metric("Главный личный фактор", prediction.strongestFactor));
+        card.addView(metric("Точность проверки", Math.round(prediction.accuracy * 100) + "%"));
+        card.addView(small(prediction.explanation));
+        card.addView(small("Обучение: " + prediction.trainingSize + " записей, проверка: " + prediction.validationSize + "."));
         return card;
     }
 
